@@ -1,0 +1,5 @@
+Superusuarios para probar aplicación
+
+username: admin
+email: admin@email.com
+password: password

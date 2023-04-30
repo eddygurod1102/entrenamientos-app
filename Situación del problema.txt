@@ -1,0 +1,18 @@
+Se desea desarrollar una aplicación web en Django para la planificación y seguimiento de microciclos de entrenamiento. Microciclo significa semana de entrenamiento.
+
+Para planificarlos, es necesario lo siguiente:
+1. Que existan atletas y entrenadores registrados. De ambos interesa nombre, apellido, sexo, edad, y una fotografía (opcional). Otra cosa a considerar, es que un atleta también puede ser entrenador y viceversa.
+2. Que existan disciplinas de entrenamiento. Interesa su nombre y una descripción de lo que trata.
+3. Conocer qué atleta entrena qué disciplina. Un atleta puede entrenas muchas disciplinas.
+4. Conocer qué entrenador enseña qué disciplina. Un entrenador puede enseñar muchas disciplinas.
+5. Que existan ejercicios registrados en la base de datos. Un ejercicio no registrado no se podrá asignar. De cada ejercicio interesa saber su nombre y una descripción que explique para qué sirve el ejercicio (opcional).
+6. El número de días que va a tener un microciclo. De los días interesa un título descriptivo del día (por ejemplo: Día 1 Pierna, Día 2 Torso, etc.). Un día de entrenamiento tiene muchos ejercicios, y por esto, también es importante decir cuáles son los ejercicios a realizar, el número de series, repeticiones, qué escala de entrenamiento utiliza el ejercicio, la intensidad en función a la escala elegida y el peso a trabajar en kilogramos y libras. Las escalas de entrenamiento sirven para medir la intensidad de entrenamiento. Las escalas son las siguientes:
+	6.1 Porcentaje de repetición máxima (%RM).
+	6.2 Repeticiones en reserva (RIR).
+	6.3 Escala de esfuerzo percibido (RPE).
+7. A qué atleta le pertenece qué microciclo, así como qué entrenadores lo planificaron. Un atleta tiene muchos microciclos, pero un microciclo sólo le puede pertenecer a un atleta, o sea, dos atletas no pueden tener la misma planificación, y un microciclo es programado por muchos entrenadores en caso de que el atleta practica más de una disciplina de entrenamiento.
+8. Que todos los atletas y entrenadores tengan una cuenta. Para una cuenta es importante el correo electrónico, una contraseña, y un permiso. Los permisos son los siguientes:
+	8.1 Atleta: Sólo tiene acceso a ver toda la información de sus microciclos.
+	8.2 Entrenador: Puede ver los atletas que está entrenando, así como asignar y modificar microciclos de entrenamiento.
+	8.3 Administrador: Agrega, modifica y elimina atletas y entrenadores de la base de datos.
+Como se describió anteriormente, de que un atleta puede ser un entrenador y viceversa, una cuenta puede tener más de dos permisos. Una persona sólo puede tener una cuenta.
