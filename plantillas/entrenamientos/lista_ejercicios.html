@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
+    {% for ejercicio in ejercicio_list %}
+    <div class="card text-center mt-3" style="width:20rem;">
+        <div class="card-header">{{ ejercicio }}</div>
+        <div class="card-body">
+            <h5 class="card-title">{{ ejercicio }}</h5>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'detalle_ejercicio' ejercicio.pk %}" class="btn btn-primary">
+                Ver ejercicio
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock contenido %}

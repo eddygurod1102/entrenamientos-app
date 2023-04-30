@@ -19,6 +19,12 @@ class Persona(models.Model):
 class Atleta(models.Model):
     persona_fk = models.ForeignKey(Persona, on_delete=models.CASCADE, verbose_name='Persona')
 
+    def get_edad(self):
+        return self.persona_fk.edad
+
+    def get_sexo(self):
+        return self.persona_fk.sexo
+
     def __str__(self):
         return f'{self.persona_fk.nombre} {self.persona_fk.apellido}'
 
@@ -27,6 +33,12 @@ class Entrenador(models.Model):
 
     def __str__(self):
         return f'{self.persona_fk.nombre} {self.persona_fk.apellido}'
+
+    def get_edad(self):
+        return self.persona_fk.edad
+
+    def get_sexo(self):
+        return self.persona_fk.sexo
 
 class Disciplina(models.Model):
     nombre = models.CharField('Nombre', max_length=30)

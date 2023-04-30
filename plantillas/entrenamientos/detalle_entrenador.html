@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container d-flex justify-content-center">
+    <div class="card text-center" style="width: 30rem;">
+    <div class="card-header">
+        {{ entrenador }}
+    </div>
+    <div class="card-body">
+        <p class="card-text">Edad: {{ entrenador.get_edad }}</p>
+        <p class="card-text">Sexo: {{ entrenador.get_sexo }}</p>
+        <p class="card-text">Disciplinas que imparte:</p>
+        <ul class="list-group">
+            {% for disciplina in disciplinas %}
+            <li class="list-group-item">
+                {{ disciplina.get_nombre_disciplina }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'lista_entrenadores' %}" class="btn btn-primary">Volver</a>
+    </div>
+</div>
+{% endblock contenido %}

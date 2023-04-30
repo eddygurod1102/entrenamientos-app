@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+{% comment %}
+<br>
+<div>
+    <a href="#">+ Agregar entrenador</a>
+</div>
+
+<ul>
+    {% for entrenador in entrenador_list %}
+    <li><a href="{% url 'detalle_entrenador' entrenador.pk %}">{{ entrenador }}</a></li>
+    {% endfor %}
+</ul>
+{% endcomment %}
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
+    {% for entrenador in entrenador_list %}
+    <div class="card text-center mt-3" style="width: 20rem;">
+        <div class="card-header">{{ entrenador }}</div>
+        <div class="card-body">
+            <h5 class="card-title">{{ entrenador }}</h5>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'detalle_entrenador' entrenador.pk %}" class="btn btn-primary">Ver info.</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock contenido %}

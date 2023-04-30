@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <a href="#" class="btn btn-success ms-4">+ Añadir atleta</a>
+</div>
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
+    {% for atleta in atleta_list %}
+    <div class="card text-center mt-3" style="width: 20rem;">
+        <div class="card-header">{{ atleta }}</div>
+        <div class="card-body">
+            <h5 class="card-title">{{ atleta }}</h5>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'detalle_atleta' atleta.pk %}" class="btn btn-primary">
+                Ver información del atleta
+            </a>
+            {#<a href="#" class="btn btn-primary">Microciclos</a>#}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock contenido %}
