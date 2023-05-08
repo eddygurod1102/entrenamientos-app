@@ -1,20 +1,22 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<div class="container">
-    <a href="#" class="btn btn-success ms-4">+ Añadir atleta</a>
+<div class="container d-flex flex-column ">
+    <a href="{% url 'agregar_atleta_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar atleta (Persona nueva)</a>
+    <a href="{% url 'agregar_atleta_existente' %}" class="btn btn-success mx-auto">+ Agregar atleta (Persona existente)</a>
 </div>
-<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap mt-3">
     {% for atleta in atleta_list %}
-    <div class="card text-center mt-3" style="width: 20rem;">
+    <div class="card text-center mb-3" style="width: 20rem;">
         <div class="card-header">{{ atleta }}</div>
         <div class="card-body">
             <h5 class="card-title">{{ atleta }}</h5>
         </div>
         <div class="card-footer">
             <a href="{% url 'detalle_atleta' atleta.pk %}" class="btn btn-primary">
-                Ver información del atleta
+                Ver info.
             </a>
+            <a href="#" class="btn btn-primary">Microciclos</a>
             {#<a href="#" class="btn btn-primary">Microciclos</a>#}
         </div>
     </div>

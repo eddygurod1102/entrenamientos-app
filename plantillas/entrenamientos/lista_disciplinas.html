@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
+<div class="container d-flex flex-column">
+    <a href="{% url 'agregar_disciplina' %}" class="btn btn-success mx-auto">+ Agregar disciplina</a>
+</div>
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap mt-3">
     {% for disciplina in disciplina_list %}
-    <div class="card text-center mt-3" style="width: 20rem;">
+    <div class="card text-center mb-3" style="width: 20rem;">
         <div class="card-header">{{ disciplina }}</div>
         <div class="card-body">
             <h5 class="card-title">{{ disciplina }}</h5>

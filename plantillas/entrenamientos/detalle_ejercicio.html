@@ -15,6 +15,8 @@
         </div>
         <div class="card-footer">
             <a href="{% url 'lista_ejercicios' %}" class="btn btn-primary">Volver</a>
+            <a href="{% url 'editar_ejercicio' ejercicio.pk %}" class="btn btn-success">Editar</a>
+            <a href="{% url 'eliminar_ejercicio' ejercicio.pk %}" class="btn btn-danger">Eliminar</a>
         </div>
     </div>
 </div>

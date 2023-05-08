@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<div class="container">
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        <h3>¿Eliminar {{ disciplina }}?</h3>
+        <input type="submit" value="Eliminar" class="btn btn-danger">
+    </form>
+    <a href="{% url 'lista_disciplinas' %}" class="btn btn-success">Volver</a>
+</div>
+{% endblock contenido %}

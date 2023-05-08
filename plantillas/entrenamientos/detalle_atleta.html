@@ -17,7 +17,10 @@
             </ul>
         </div>
         <div class="card-footer">
-            <a href="{% url 'lista_atletas' %}" class="btn btn-primary">Atrás</a>
+            <a href="{% url 'lista_atletas' %}" class="btn btn-primary">Volver</a>
+            <a href="{% url 'editar_atleta' atleta.pk %}" class="btn btn-success">Editar</a>
+            <a href="{% url 'eliminar_atleta' atleta.pk %}" class="btn btn-danger">Eliminar (Atleta)</a>
+            <a href="{% url 'eliminar_persona' atleta.persona_fk.pk %}" class="btn btn-danger mt-2">Eliminar (Persona)</a>
         </div>
     </div>
 </div>

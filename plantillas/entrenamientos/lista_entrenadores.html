@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-{% comment %}
-<br>
-<div>
-    <a href="#">+ Agregar entrenador</a>
+<div class="container d-flex flex-column">
+    <a href="{% url 'agregar_entrenador_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar entrenador (Persona nueva)</a>
+    <a href="{% url 'agregar_entrenador_existente' %}" class="btn btn-success mx-auto">+ Agregar entrenador (Persona existente)</a>
 </div>
-
-<ul>
-    {% for entrenador in entrenador_list %}
-    <li><a href="{% url 'detalle_entrenador' entrenador.pk %}">{{ entrenador }}</a></li>
-    {% endfor %}
-</ul>
-{% endcomment %}
 <div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
     {% for entrenador in entrenador_list %}
     <div class="card text-center mt-3" style="width: 20rem;">

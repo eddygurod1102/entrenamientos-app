@@ -20,6 +20,9 @@
     </div>
     <div class="card-footer">
         <a href="{% url 'lista_entrenadores' %}" class="btn btn-primary">Volver</a>
+        <a href="{% url 'editar_entrenador' entrenador.pk %}" class="btn btn-success">Editar</a>
+        <a href="{% url 'eliminar_entrenador' entrenador.pk %}" class="btn btn-danger">Eliminar (Entrenador)</a>
+        <a href="{% url 'eliminar_persona' entrenador.persona_fk.pk %}" class="btn btn-danger mt-2">Eliminar(Persona)</a>
     </div>
 </div>
 {% endblock contenido %}

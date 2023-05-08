@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block contenido %}
+<div class="container mb-3">
+    <form action="{% url 'entrenador_editado' entrenador.pk %}" method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Editar entrenador" class="btn btn-outline-primary">
+    </form>
+</div>
+<script type="module">
+    import { entrenadoresDisciplinas, personaSexo } from "{% static 'js/script.js' %}"
+    window.addEventListener('load', () => {
+        entrenadoresDisciplinas("{{ entrenador.pk }}")
+        personaSexo("{{ entrenador.persona_fk.pk }}")
+    });
+</script>
+{% endblock contenido %}
