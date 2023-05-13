@@ -1,5 +1,6 @@
 from django import forms
-from .models import Disciplina, Persona, Atleta, Entrenador
+from django.forms import ModelForm
+from .models import Disciplina, Persona, Atleta, Entrenador, Dias_Ejercicios
 
 # Formulario para agregar atletas y/o entrenadores no registrados en la base de datos.
 class FormularioPersona(forms.Form):
@@ -123,3 +124,46 @@ class FormularioPersonaExistente(forms.Form):
         else:
             self.fields['disciplinas'].label = 'Disciplina(s) que practica'
         return self
+
+# Formulario para agregar microciclos
+class FormularioMicrociclo(forms.Form):
+    titulo = forms.CharField(
+        widget = forms.TextInput(
+            attrs = {
+                'id': 'titulo'
+            }
+        ),
+        label = 'Título',
+        required = True
+    )
+
+    entrenadores = forms.CharField(
+        widget = forms.CheckboxSelectMultiple(
+            attrs = {
+                'id': 'entrenadores'
+            }
+        ),
+        label = 'Entrenador(es) que planifica(n) el microciclo',
+        required = True
+    )
+
+    def set_entrenadores(self, entrenadores):
+        self.fields['entrenadores'].widget.choices = entrenadores
+
+# Formulario para agregar un día de entrenamiento a un microciclo.
+class FormularioDiaEntrenamiento(forms.Form):
+    titulo = forms.CharField(
+        widget = forms.TextInput(
+            attrs = {
+                'id': 'titulo'
+            }
+        ),
+        label = 'Título',
+        required = True
+    )
+
+# Formulario para agregar un ejercicio a un día de entrenamiento
+class FormularioEjercicio(ModelForm):
+    class Meta():
+        model = Dias_Ejercicios
+        fields = ['ejercicios_fk', 'series', 'repeticiones', 'escala', 'intensidad', 'peso_kg']

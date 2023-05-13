@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 class Persona(models.Model):
     class Meta():
@@ -37,6 +38,9 @@ class Atleta(models.Model):
     def get_sexo(self):
         return self.persona_fk.sexo
 
+    def get_nombre_completo(self):
+        return f'{self.get_nombre()} {self.get_apellido()}'
+
     def __str__(self):
         return f'{self.persona_fk.nombre} {self.persona_fk.apellido}'
 
@@ -60,6 +64,28 @@ class Entrenador(models.Model):
 
     def get_sexo(self):
         return self.persona_fk.sexo
+
+    # Retorna una lista de tuplas con todos los entrenadores registrados.
+    # Esta función será útil para poner los entrenadores en el formulario.
+    def get_queryset_tupla_entrenadores():
+        lista_entrenadores = []
+        contador = 1
+
+        for e in Entrenador.objects.all():
+            tupla = (contador, f'{e.get_nombre()} {e.get_apellido()}')
+            lista_entrenadores.append(tupla)
+            contador += 1
+
+        return lista_entrenadores
+
+    # Retorna una lista con todos los entrenadores registrados.
+    def get_queryset_entrenadores():
+        lista_entrenadores = []
+
+        for e in Entrenador.objects.all():
+            lista_entrenadores.append(e)
+
+        return lista_entrenadores
 
 class Disciplina(models.Model):
     class Meta():
@@ -106,14 +132,29 @@ class Microciclo(models.Model):
     class Meta():
         db_table = 'microciclo'
 
+    titulo = models.CharField('Título', max_length=255)
     numero_microciclo = models.PositiveSmallIntegerField('Número de microciclo')
     atleta_fk = models.ForeignKey(Atleta, on_delete=models.CASCADE, verbose_name='Atleta')
 
     def get_persona(self):
         return self.atleta_fk.persona_fk
 
+    def get_nombre_completo_atleta(self):
+        return self.atleta_fk.get_nombre_completo()
+
     def __str__(self):
-        return f'Microciclo {self.numero_microciclo} - {self.get_persona().nombre} {self.get_persona().apellido}'
+        return f'{self.titulo} - {self.atleta_fk.__str__()}'
+
+    # Definición de una ruta de éxito después de modificar los datos de
+    # un microciclo en específico (para no declarar un 'success_url' dentro
+    # de la vista).
+    def get_absolute_url(self):
+        return reverse(
+            'microciclos_atleta',
+            kwargs = {
+                'pk': self.atleta_fk.pk,
+            }
+        )
 
 class Dia_Entrenamiento(models.Model):
     class Meta():
@@ -136,6 +177,18 @@ class Dia_Entrenamiento(models.Model):
 
     def __str__(self):
         return f'{self.titulo} - Microciclo {self.get_microciclo_numero()} - {self.get_microciclo_atleta()}'
+    
+    # Definición de ruta de éxito después de modificar los datos de
+    # un día de entrenamiento en específico (para no declarar un 'success_url'
+    # dentro de la vista).
+    def get_absolute_url(self):
+        return reverse(
+            'dias_entrenamiento',
+            kwargs = {
+                'pk1': self.microciclo_fk.atleta_fk.pk,
+                'pk2': self.pk,
+            }
+        )
 
 class Atletas_Disciplina(models.Model):
     class Meta():
@@ -203,7 +256,7 @@ class Dias_Ejercicios(models.Model):
         verbose_name = 'Día de entrenamiento'
     )
 
-    ejercicio_fk = models.ForeignKey(
+    ejercicios_fk = models.ForeignKey(
         Ejercicio,
         on_delete = models.CASCADE,
         verbose_name = 'Ejercicio'
@@ -224,6 +277,21 @@ class Dias_Ejercicios(models.Model):
 
     def __str__(self):
         return f'{self.dias_entrenamiento_fk.__str__()} - {self.ejercicios_fk.__str__()}'
+
+    # Campo derivado de la tabla Dias_Ejercicios. Obtiene el peso en libras en función
+    # al peso en kilogramos.
+    def get_peso_lb(self):
+        peso_lb = float(self.peso_kg) * 2.2
+        return round(peso_lb, 2)
+
+    def get_absolute_url(self):
+        return reverse(
+            'dias_entrenamiento',
+            kwargs = {
+                'pk1': self.dias_entrenamiento_fk.microciclo_fk.atleta_fk.pk,
+                'pk2': self.dias_entrenamiento_fk.pk
+            }
+        )
 
 class Entrenadores_Microciclo(models.Model):
     class Meta():

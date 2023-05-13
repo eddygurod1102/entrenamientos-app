@@ -4,7 +4,17 @@ from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .forms import *
-from .models import Atleta, Atletas_Disciplina, Entrenador, Entrenadores_Disciplina, Ejercicio, Disciplina
+from .models import (
+    Atleta,
+    Atletas_Disciplina,
+    Entrenador,
+    Entrenadores_Disciplina,
+    Ejercicio,
+    Disciplina,
+    Microciclo,
+    Entrenadores_Microciclo,
+    Dia_Entrenamiento
+)
 
 # Renderiza la página de inicio.
 def get_pagina_inicio(request):
@@ -71,6 +81,47 @@ class VistaDetalleEntrenador():
         return render(
             request,
             'entrenamientos/detalle_entrenador.html',
+            context
+        )
+
+# Vista que muestra los microciclos
+class VistaListaMicrociclos():
+    def get_vista(request, pk):
+        atleta = Atleta.objects.get(pk=pk)
+        microciclos = Microciclo.objects.filter(atleta_fk=atleta)
+
+        context = {
+            'atleta': atleta,
+            'microciclos': microciclos
+        }
+
+        return render(
+            request,
+            'entrenamientos/lista_microciclos_atleta.html',
+            context
+        )
+
+# Vista que muestra los días de entrenamiento de un microciclo de un atleta.
+class VistaListaDiasEntrenamiento():
+    def get_vista(request, pk1, pk2):
+        # Obtener al atleta mediante su llave primaria.
+        atleta = Atleta.objects.get(pk=pk1)
+
+        # Obtener el microciclo del atleta.
+        microciclo = Microciclo.objects.get(pk=pk2)
+
+        # Obtener los días de entrenamiento del microciclo.
+        dias_entrenamiento = Dia_Entrenamiento.objects.filter(microciclo_fk=microciclo)
+
+        context = {
+            'dias_entrenamiento': dias_entrenamiento,
+            'atleta': atleta,
+            'microciclo': microciclo,
+        }
+
+        return render(
+            request,
+            'entrenamientos/lista_dias_entrenamiento.html',
             context
         )
     
@@ -367,12 +418,152 @@ class VistaFormularioAgregarEntrenadorExistente():
                 contador += 1
         return HttpResponseRedirect(reverse_lazy('lista_entrenadores'))
 
+# Vista para agregar un microciclo
+class VistaFormularioAgregarMicrociclo():
+    def get_form(request, pk):
+        # Obtener al atleta por su llave primaria.
+        atleta = Atleta.objects.get(pk=pk)
+
+        # Creación del formulario
+        form = FormularioMicrociclo()
+
+        # Agregar como checkboxes los entrenadores registrados.
+        form.set_entrenadores(entrenadores=Entrenador.get_queryset_tupla_entrenadores())
+
+        context = {
+            'form': form,
+            'atleta': atleta
+        }
+
+        return render(
+            request,
+            'entrenamientos/formulario_agregar_microciclo.html',
+            context
+        )
+
+    def agregar_microciclo(request, pk):
+        # Obtener datos del formulario.
+        titulo = request.POST['titulo']
+        entrenadores = request.POST.getlist('entrenadores')
+
+        # Obtener al atleta mediante su llave primaria.
+        atleta = Atleta.objects.get(pk=pk)
+
+        # Creación de un nuevo objeto Microciclo.
+        microciclo = Microciclo()
+        microciclo.titulo = titulo
+        microciclo.numero_microciclo = Microciclo.objects.filter(atleta_fk=atleta).count() + 1
+        microciclo.atleta_fk = atleta
+
+        # Guardar microciclo en la base de datos.
+        microciclo.save() 
+
+        contador = 1 # Variable para recorres la lista de checkboxes de los entrenadores.
+
+        # Por cada checkbox de entrenadores seleccionado, se agrega un registro en la tabla
+        # Entrenadores_Microciclo, con la información del entrenador y del microciclo.
+        for entrenador in Entrenador.get_queryset_entrenadores():
+            if entrenadores.count(f'{contador}') == 1:
+                entrenador_microciclo = Entrenadores_Microciclo(
+                    entrenador_fk = entrenador,
+                    microciclo_fk = microciclo
+                )
+
+                entrenador_microciclo.save()
+                contador += 1
+            else:
+                contador += 1
+        return HttpResponseRedirect(reverse_lazy('microciclos_atleta', kwargs={'pk': pk}))
+
+# Vista para añadir un día de entrenamiento a un microciclo en específico.
+class VistaFormularioAgregarDia():
+    def get_form(request, pk1, pk2):
+        # Obtener al atleta y al microciclo mediante sus llaves primarias.
+        atleta = Atleta.objects.get(pk=pk1)
+        microciclo = Microciclo.objects.get(pk=pk2)
+        
+        context = {
+            'form': FormularioDiaEntrenamiento(),
+            'atleta': atleta,
+            'microciclo': microciclo,
+        }
+
+        return render(
+            request,
+            'entrenamientos/formulario_agregar_dia.html',
+            context
+        )
+
+    def agregar_dia(request, pk1, pk2):
+        # Obtener datos del formulario.
+        titulo = request.POST['titulo']
+
+        # Obtener el microciclo mediante su llave primaria.
+        microciclo = Microciclo.objects.get(pk=pk2)
+
+        # Creación de un objeto Dia_Entrenamiento
+        dia_entrenamiento = Dia_Entrenamiento()
+        dia_entrenamiento.titulo = titulo
+        dia_entrenamiento.microciclo_fk = microciclo
+
+        # Guardarlo en la base de datos.
+        dia_entrenamiento.save()
+        return HttpResponseRedirect(reverse_lazy('dias_entrenamiento', kwargs={'pk1': pk1, 'pk2': pk2}))
+
+# Vista para agregar un ejercicio a un día de entrenamiento
+class VistaFormularioAgregarEjercicioDia():
+    def get_form(request, pk1, pk2, pk3):
+        # Obtener al atleta, microciclo y el día de entrenamiento mediante sus llaves primarias.
+        atleta = Atleta.objects.get(pk=pk1)
+        microciclo = Microciclo.objects.get(pk=pk2)
+        dia_entrenamiento = Dia_Entrenamiento.objects.get(pk=pk3)
+
+        context = {
+            'form': FormularioEjercicio(),
+            'atleta': atleta,
+            'microciclo': microciclo,
+            'dia_entrenamiento': dia_entrenamiento,
+        }
+
+        return render(
+            request,
+            'entrenamientos/formulario_agregar_ejercicio_dia.html',
+            context
+        )
+
+    def agregar_ejercicio(request, pk1, pk2, pk3):
+        dia_entrenamiento = Dia_Entrenamiento.objects.get(pk=pk3)
+
+        # Obtener los datos del formulario.
+        ejercicio_pk = request.POST['ejercicios_fk']
+        series = request.POST['series']
+        repeticiones = request.POST['repeticiones']
+        escala = request.POST['escala']
+        intensidad = request.POST['intensidad']
+        peso_kg = request.POST['peso_kg']
+
+        # Obtener el ejercicio mediante la llave primaria que nos da el select.
+        ejercicio = Ejercicio.objects.get(pk=ejercicio_pk)
+        
+        # Creación de un objeto Dias_Ejercicios.
+        dias_ejercicios = Dias_Ejercicios()
+        dias_ejercicios.dias_entrenamiento_fk = dia_entrenamiento
+        dias_ejercicios.ejercicios_fk = ejercicio
+        dias_ejercicios.series = series
+        dias_ejercicios.repeticiones = repeticiones
+        dias_ejercicios.escala = escala
+        dias_ejercicios.intensidad = intensidad
+        dias_ejercicios.peso_kg = peso_kg
+
+        # Guardar en la base de datos.
+        dias_ejercicios.save()
+        return HttpResponseRedirect(reverse_lazy('dias_entrenamiento', kwargs={'pk1': pk1, 'pk2': pk2,}))
+    
 # Vista para editar información de un ejercicio.
 class VistaFormularioEditarEjercicio(UpdateView):
     model = Ejercicio
     template_name = 'entrenamientos/formulario_editar_ejercicio.html'
-    fields = ['nombre', 'descripcion']
-    success_url = reverse_lazy('lista_ejercicios')
+    fields = '__all__'
 
 # Vista para editar información de una disciplina.
 class VistaFormularioEditarDisciplina(UpdateView):
@@ -547,7 +738,23 @@ class VistaFormularioEditarEntrenador():
                 contador += 1
         return HttpResponseRedirect(reverse_lazy('lista_entrenadores'))
 
+# Vista que modifica la información de un día de entrenamiento
+class VistaFormularioEditarDia(UpdateView):
+    model = Dia_Entrenamiento
+    template_name = 'entrenamientos/formulario_editar_dia.html'
+    fields = ['titulo']
 
+# Vista para editar la información de un microciclo
+class VistaFormularioEditarMicrociclo(UpdateView):
+    model = Microciclo
+    template_name = 'entrenamientos/formulario_editar_microciclo.html'
+    fields = ['titulo']
+
+# Vista para editar la información de un ejercicio en un día de entrenamiento.
+class VistaFormularioEditarEjercicioDia(UpdateView):
+    model = Dias_Ejercicios
+    template_name = 'entrenamientos/formulario_editar_ejercicio_dia.html'
+    fields = ['ejercicios_fk', 'series', 'repeticiones', 'escala', 'intensidad', 'peso_kg']
 
 # Vista para eliminar un atleta sin borrar el registro de la persona de
 # la base de datos.
@@ -581,6 +788,24 @@ class VistaFormularioEliminarDisciplina(DeleteView):
     model = Disciplina
     template_name = 'entrenamientos/formulario_eliminar_disciplina.html'
     success_url = reverse_lazy('lista_disciplinas')
+
+# Vista para eliminar un microciclo.
+class VistaFormularioEliminarMicrociclo(DeleteView):
+    model = Microciclo
+    template_name = 'entrenamientos/formulario_eliminar_microciclo.html'
+    success_url = reverse_lazy('lista_atletas')
+
+# Vista para eliminar un día de entrenamiento.
+class VistaFormularioEliminarDia(DeleteView):
+    model = Dia_Entrenamiento
+    template_name = 'entrenamientos/formulario_eliminar_dia.html'
+    success_url = reverse_lazy('lista_atletas')
+
+# Vista para eliminar un ejercicio de un día de entrenamiento.
+class VistaFormularioEliminarEjercicioDia(DeleteView):
+    model = Dias_Ejercicios
+    template_name = 'entrenamientos/formulario_eliminar_ejercicio_dia.html'
+    success_url = reverse_lazy('lista_atletas')
 
 
 # Vistas para hacer peticiones desde el FrontEnd. Las respuestas serán

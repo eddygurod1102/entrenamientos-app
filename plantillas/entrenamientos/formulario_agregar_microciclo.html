@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<div class="container">
+    <form action="{% url 'atleta_microciclo_agregado' atleta.pk %}" method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Agregar microciclo" class="btn btn-primary">
+    </form>
+</div>
+{% endblock contenido %}

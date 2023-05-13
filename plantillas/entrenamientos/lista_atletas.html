@@ -16,8 +16,7 @@
             <a href="{% url 'detalle_atleta' atleta.pk %}" class="btn btn-primary">
                 Ver info.
             </a>
-            <a href="#" class="btn btn-primary">Microciclos</a>
-            {#<a href="#" class="btn btn-primary">Microciclos</a>#}
+            <a href="{% url 'microciclos_atleta' atleta.pk %}" class="btn btn-primary">Microciclos</a>
         </div>
     </div>
     {% endfor %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container d-flex flex-column">
+    <a href="{% url 'agregar_microciclo' atleta.pk %}" class="btn btn-success mx-auto mb-3">+ Agregar microciclo</a>
+</div>
+<div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap mt-3">
+    {% for microciclo in microciclos %}
+    <div class="card text-center mb-3" style="width: 20rem;">
+        <div class="card-header">{{ microciclo.titulo }}</div>
+        <div class="card-body">
+            <p class="card-text">Microciclo n&uacute;mero: {{ microciclo.numero_microciclo }}</p>
+            <p class="card-text">Programado por:</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'dias_entrenamiento' atleta.pk microciclo.pk %}" class="btn btn-success">Ver</a>
+            <a href="{% url 'editar_microciclo' microciclo.pk %}" class="btn btn-primary">Editar</a>
+            <a href="{% url 'eliminar_microciclo' microciclo.pk %}" class="btn btn-danger">Eliminar</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock contenido %}

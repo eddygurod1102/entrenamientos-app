@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <h3>
+            ¿Eliminar '{{ dias_ejercicios.ejercicios_fk }}' de '{{ dias_ejercicios.dias_entrenamiento_fk.titulo }}'?
+        </h3>
+        <input type="submit" value="Eliminar" class="btn btn-danger">
+    </form>
+</div>
+{% endblock contenido %}

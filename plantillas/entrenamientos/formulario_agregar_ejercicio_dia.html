@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<div class="container">
+    <form action="{% url 'ejercicio_dia_agregado' atleta.pk microciclo.pk dia_entrenamiento.pk %}" method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Agregar ejercicio al día de entrenamiento" class="btn btn-primary">
+    </form>
+</div>
+{% endblock contenido %}
