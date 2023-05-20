@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load entrenamientos_extra %}
+
 {% block contenido %}
 <div class="container d-flex justify-content-center">
     <div class="card text-center" style="width:30rem;">
@@ -11,9 +13,7 @@
             <p class="card-text">Sexo: {{ atleta.get_sexo }}</p>
             <p class="card-text">Disciplinas que entrena:</p>
             <ul class="list-group">
-                {% for disciplina in disciplinas %}
-                <li class="list-group-item">{{ disciplina.get_nombre_disciplina }}</li>
-                {% endfor %}
+                {% atleta_disciplinas atleta %}
             </ul>
         </div>
         <div class="card-footer">

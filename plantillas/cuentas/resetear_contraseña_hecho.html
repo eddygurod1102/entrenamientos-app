@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="container">
+    <h2>
+        Revisa tu bandeja de entrada. En caso de que no aparezca en tu bandeja principal,
+        por favor, revisa la bandeja de spam.
+    </h2>
+    <a href="{% url 'inicio' %}" class="btn btn-info">Volver a la p&aacute;gina de inicio</a>
+</div>
+{% endblock contenido %}

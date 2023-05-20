@@ -7,7 +7,7 @@ urlpatterns = [
 
     # URLs relacionados con atletas
     path('atletas/', VistaListaAtletas.as_view(), name='lista_atletas'),
-    path('atletas/<int:atleta_pk>/', VistaDetalleAtleta.get_vista, name='detalle_atleta'),
+    path('atletas/<int:pk>/', VistaDetalleAtleta.as_view(), name='detalle_atleta'),
     path('atletas/nuevo/', VistaFormularioAgregarAtleta.get_form, name='agregar_atleta_nuevo'),
     path('atletas/nuevo/ok/', VistaFormularioAgregarAtleta.agregar_atleta, name='atleta_agregado'),
     path('atletas/existente/', VistaFormularioAgregarAtletaExistente.get_form, name='agregar_atleta_existente'),
@@ -32,7 +32,7 @@ urlpatterns = [
 
     # URLs relacionados con entrenadores
     path('entrenadores/', VistaListaEntrenadores.as_view(), name='lista_entrenadores'),
-    path('entrenadores/<int:entrenador_pk>/', VistaDetalleEntrenador.get_vista, name='detalle_entrenador'),
+    path('entrenadores/<int:pk>/', VistaDetalleEntrenador.as_view(), name='detalle_entrenador'),
     path('entrenadores/nuevo/', VistaFormularioAgregarEntrenador.get_form, name='agregar_entrenador_nuevo'),
     path('entrenadores/nuevo/ok/', VistaFormularioAgregarEntrenador.agregar_entrenador, name='entrenador_agregado'),
     path('entrenadores/existente/', VistaFormularioAgregarEntrenadorExistente.get_form, name='agregar_entrenador_existente'),

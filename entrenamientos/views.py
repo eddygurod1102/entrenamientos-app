@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .forms import *
@@ -45,44 +46,14 @@ class VistaListaEjercicios(ListView):
     template_name = 'entrenamientos/lista_ejercicios.html'
 
 # Vista que muestra la información de un atleta.
-class VistaDetalleAtleta():
-    def get_vista(request, atleta_pk):
-        # Obtener al atleta mediante su llave primaria.
-        atleta = Atleta.objects.get(pk=atleta_pk)
-
-        # Obtener las disciplinas que el atleta entrena.
-        disciplinas = Atletas_Disciplina.objects.filter(atleta_fk=atleta)
-
-        context = {
-            'atleta': atleta,
-            'disciplinas': disciplinas,
-        }
-
-        return render(
-            request,
-            'entrenamientos/detalle_atleta.html',
-            context
-        )
+class VistaDetalleAtleta(DetailView):
+    model = Atleta
+    template_name = 'entrenamientos/detalle_atleta.html'
     
 # Vista que muestra la información de un entrenador.
-class VistaDetalleEntrenador():
-    def get_vista(request, entrenador_pk):
-        # Obtener al entrenador mediante su llave primaria.
-        entrenador = Entrenador.objects.get(pk=entrenador_pk)
-
-        # Obtener las disciplinas que el entrenador imparte.
-        disciplinas = Entrenadores_Disciplina.objects.filter(entrenador_fk=entrenador)
-
-        context = {
-            'entrenador': entrenador,
-            'disciplinas': disciplinas,
-        }
-
-        return render(
-            request,
-            'entrenamientos/detalle_entrenador.html',
-            context
-        )
+class VistaDetalleEntrenador(DetailView):
+    model = Entrenador
+    template_name = 'entrenamientos/detalle_entrenador.html'
 
 # Vista que muestra los microciclos
 class VistaListaMicrociclos():

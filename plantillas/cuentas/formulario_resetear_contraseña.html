@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<div class="container">
+    <p>
+        Por favor, escribe tu correo electr&oacute;nico para enviarte instrucciones
+        para que puedas cambiar tu contrase&ntilde;a:
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Cambiar contraseña" class="btn btn-primary">
+    </form>
+</div>
+{% endblock contenido %}
