@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<div class="container d-flex flex-column">
-    <a href="{% url 'agregar_entrenador_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar entrenador (Persona nueva)</a>
-    <a href="{% url 'agregar_entrenador_existente' %}" class="btn btn-success mx-auto">+ Agregar entrenador (Persona existente)</a>
-</div>
+{% if user.is_authenticated %}
+    <div class="container d-flex flex-column">
+        <a href="{% url 'agregar_entrenador_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar entrenador (Persona nueva)</a>
+        <a href="{% url 'agregar_entrenador_existente' %}" class="btn btn-success mx-auto">+ Agregar entrenador (Persona existente)</a>
+    </div>
+{% endif %}
 <div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap">
     {% for entrenador in entrenador_list %}
     <div class="card text-center mt-3" style="width: 20rem;">

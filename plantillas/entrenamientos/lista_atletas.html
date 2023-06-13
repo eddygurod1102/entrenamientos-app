@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<div class="container d-flex flex-column ">
-    <a href="{% url 'agregar_atleta_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar atleta (Persona nueva)</a>
-    <a href="{% url 'agregar_atleta_existente' %}" class="btn btn-success mx-auto">+ Agregar atleta (Persona existente)</a>
-</div>
+{% if user.is_authenticated %}
+    <div class="container d-flex flex-column ">
+        <a href="{% url 'agregar_atleta_nuevo' %}" class="btn btn-success mx-auto mb-3">+ Agregar atleta (Persona nueva)</a>
+        <a href="{% url 'agregar_atleta_existente' %}" class="btn btn-success mx-auto">+ Agregar atleta (Persona existente)</a>
+    </div>
+{% endif %}
 <div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap mt-3">
     {% for atleta in atleta_list %}
     <div class="card text-center mb-3" style="width: 20rem;">

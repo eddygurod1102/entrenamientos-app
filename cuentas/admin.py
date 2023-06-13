@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import Persona_Cuenta
 
-# Register your models here.
+admin.site.register(Persona_Cuenta)

@@ -29,5 +29,5 @@ def atleta_disciplinas(atleta):
 def entrenador_disciplinas(entrenador):
     entrenador_disciplinas = Entrenadores_Disciplina.objects.filter(entrenador_fk=entrenador)
     return {
-        'entrenador_disciplina': entrenador_disciplinas,
+        'entrenador_disciplinas': entrenador_disciplinas,
     }

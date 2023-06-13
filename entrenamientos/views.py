@@ -1,5 +1,6 @@
+from typing import Any, Dict
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
@@ -73,6 +74,14 @@ class VistaListaMicrociclos():
         )
 
 # Vista que muestra los días de entrenamiento de un microciclo de un atleta.
+class VistaListaDiasEntrenamiento(ListView):
+    model = Dia_Entrenamiento
+    template_name = 'entrenamientos/lista_dias_entrenamiento.html'
+
+    def get_context_data(**kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 class VistaListaDiasEntrenamiento():
     def get_vista(request, pk1, pk2):
         # Obtener al atleta mediante su llave primaria.
@@ -121,131 +130,38 @@ class VistaFormularioAgregarDisciplina(CreateView):
     success_url = reverse_lazy('lista_disciplinas')
 
 # Vista para agregar un atleta nuevo.
-class VistaFormularioAgregarAtleta():
-    def get_form(request):
-        # Creación del formulario.
+class VistaFormularioAgregarAtleta(FormView):
+    form_class = FormularioPersona
+    template_name = 'entrenamientos/formulario_agregar_atleta.html'
+    success_url = reverse_lazy('inicio')
+
+    def form_valid(self, form):
+        form.agregar_atleta(self.request)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         form = FormularioPersona()
-
-        # Agregar como checkboxes al formulario todas las disciplinas que están registradas.
-        form.set_disciplinas(disciplinas=Disciplina.get_queryset_tupla_disciplinas())
-
-        context = {
-            'form': form.es_entrenador_atleta(bandera='Atleta')
-        }
-
-        return render(
-            request,
-            'entrenamientos/formulario_agregar_atleta.html',
-            context
-        )
-
-    def agregar_atleta(request):
-        # Obtener datos del formulario.
-        nombre = request.POST['nombre']
-        apellido = request.POST['apellido']
-        edad = request.POST['edad']
-        sexo = request.POST['sexo']
-        fotografia = request.POST['fotografia']
-
-        # Obtiene lista de checkboxes activados.
-        disciplinas = request.POST.getlist('disciplinas')
-
-        # Creación de un nuevo objeto Persona.
-        persona = Persona()
-        persona.nombre = nombre
-        persona.apellido = apellido
-        persona.edad = edad
-        persona.sexo = sexo
-        persona.fotografia = fotografia
-
-        # Guardar el registro de la persona en la base de datos.
-        persona.save()
-
-        # Creación de un objeto Atleta, el cuál, obtiene los datos del objeto persona, para luego
-        # después, guardarlo en la base de datos, pero ahora en la tabla Atletas.
-        atleta = Atleta()
-        atleta.persona_fk = persona
-        atleta.save()
-
-        contador = 1 # Variable para recorrer la lista de checkboxes de las disciplinas.
-
-        # Por cada checkbox de disciplinas seleccionado, se agrega un registro en la tabla 
-        # Atletas_Disciplinas, con la información del atleta y de la disciplina.
-        for disciplina in Disciplina.get_queryset_disciplinas():
-            if disciplinas.count(f'{contador}') == 1:
-                atleta_disciplina = Atletas_Disciplina(
-                    atleta_fk = atleta,
-                    disciplina_fk = disciplina
-                )
-
-                atleta_disciplina.save()
-                contador += 1
-            else:
-                contador += 1
-        return HttpResponseRedirect(reverse_lazy('lista_atletas'))
+        form.es_entrenador_atleta(bandera = 'Atleta')
+        context['form'] = form
+        return context
 
 # Vista para agregar un entrenador nuevo.
-class VistaFormularioAgregarEntrenador():
-    def get_form(request):
-        # Creación del formulario.
+class VistaFormularioAgregarEntrenador(FormView):
+    form_class = FormularioPersona
+    template_name = 'entrenamientos/formulario_agregar_entrenador.html'
+    success_url = reverse_lazy('lista_entrenadores')
+
+    def form_valid(self, form):
+        form.agregar_entrenador(self.request)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         form = FormularioPersona()
-
-        # Agregar como checkboxes al formulario todas las disciplinas que están registradas.
-        form.set_disciplinas(disciplinas=Disciplina.get_queryset_tupla_disciplinas())
-
-        context = {
-            'form': form.es_entrenador_atleta(bandera='Entrenador')
-        }
-
-        return render(
-            request,
-            'entrenamientos/formulario_agregar_entrenador.html',
-            context
-        )
-
-    def agregar_entrenador(request):
-        # Obtener los datos del formulario.
-        nombre = request.POST['nombre']
-        apellido = request.POST['apellido']
-        edad = request.POST['edad']
-        sexo = request.POST['sexo']
-        fotografia = request.POST['fotografia']
-        disciplinas = request.POST.getlist('disciplinas') # Obtiene lista de checkboxes activados
-
-        # Creación de un nuevo objeto Persona.
-        persona = Persona()
-        persona.nombre = nombre
-        persona.apellido = apellido
-        persona.edad = edad
-        persona.sexo = sexo
-        persona.fotografia = fotografia
-
-        # Guardar el registro de la persona en la base de datos.
-        persona.save()
-
-        # Creación de un objeto Entrenador, el cuál obtiene los datos del objeto persona, para luego
-        # después, guardarlo en la base de datos, pero ahora en la tabla Entrenadores.
-        entrenador = Entrenador()
-        entrenador.persona_fk = persona
-        entrenador.save()
-
-        contador = 1 # Variable para recorrer la lista de checkboxes de las disciplinas.
-
-        # Por cada checkbox de disciplinas seleccionado, se agrega un registro en la tabla
-        # Entrenadores_Disciplina, con la información del entrenador y de la disciplina.
-        for disciplina in Disciplina.get_queryset_disciplinas():
-            if disciplinas.count(f'{contador}') == 1:
-                entrenador_disciplina = Entrenadores_Disciplina(
-                    entrenador_fk = entrenador,
-                    disciplina_fk = disciplina
-                )
-
-                entrenador_disciplina.save()
-                contador += 1
-            else:
-                contador += 1
-        return HttpResponseRedirect(reverse_lazy('lista_entrenadores'))
-
+        form.es_entrenador_atleta(bandera = 'Entrenador')
+        context['form'] = form
+        return context
 
 # Vista para agregar a un entrenador como atleta.
 class VistaFormularioAgregarAtletaExistente():
@@ -777,7 +693,6 @@ class VistaFormularioEliminarEjercicioDia(DeleteView):
     model = Dias_Ejercicios
     template_name = 'entrenamientos/formulario_eliminar_ejercicio_dia.html'
     success_url = reverse_lazy('lista_atletas')
-
 
 # Vistas para hacer peticiones desde el FrontEnd. Las respuestas serán
 # enviadas como un JSON.

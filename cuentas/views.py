@@ -8,6 +8,9 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetConfirmView,
 )
+from django.contrib.auth.models import User
+from django.views.generic import CreateView
+from .forms import UserForm
 
 class VistaIniciarSesion(LoginView):
     template_name = 'cuentas/login.html'
@@ -28,3 +31,9 @@ class VistaResetearContraseñaHecho(PasswordResetDoneView):
 
 class VistaResetarContraseñaConfirmar(PasswordResetConfirmView):
     pass
+
+class VistaAgregarUsuario(CreateView):
+    # model = User
+    form_class = UserForm
+    template_name = 'cuentas/crear_usuario.html'
+    success_url = reverse_lazy('login')

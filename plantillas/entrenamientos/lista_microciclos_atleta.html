@@ -11,6 +11,11 @@
         <div class="card-body">
             <p class="card-text">Microciclo n&uacute;mero: {{ microciclo.numero_microciclo }}</p>
             <p class="card-text">Programado por:</p>
+            <ul class="list-group">
+                {% for entrenador in microciclo.entrenadores_microciclo_set.all %}
+                    <li class="list-group-item">{{ entrenador.entrenador_fk }}</li>
+                {% endfor %}
+            </ul>
         </div>
         <div class="card-footer">
             <a href="{% url 'dias_entrenamiento' atleta.pk microciclo.pk %}" class="btn btn-success">Ver</a>
