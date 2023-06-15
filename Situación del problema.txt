@@ -14,7 +14,7 @@ Para planificarlos, es necesario lo siguiente:
 8. Que todos los atletas y entrenadores tengan una cuenta. Para una cuenta es importante el correo electrónico, una contraseña, y un permiso. Los permisos son los siguientes:
 	8.1 Atleta: Sólo tiene acceso a ver toda la información de sus microciclos.
 	8.2 Entrenador: Puede ver los atletas que está entrenando, así como asignar y modificar microciclos de entrenamiento.
-	8.3 Administrador: Agrega, modifica y elimina atletas y entrenadores de la base de datos.
+	8.3 Administrador: Privilegio máximo.
 Como se describió anteriormente, de que un atleta puede ser un entrenador y viceversa, una cuenta puede tener más de dos permisos. Una persona sólo puede tener una cuenta.
 
 ACTUALIZACION: Además del número y a quién le pertenece un microciclo, se necesita un título para el microciclo. Esto con el fin de que sea más descriptivo (Por ejemplo: Microciclo 1: Semana enfocada a torso, Microciclo 3: Semana enfocada a piernas, etc..).

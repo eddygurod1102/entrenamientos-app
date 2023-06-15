@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags%}
+
+{% block contenido %}
+<div class="container">
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col">
+                <fieldset>
+                    <legend>Datos generales del entrenador</legend>
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <div class="input-group has-validation mb-3">
+                        {% if form.nombre.errors %}
+                            <input type="text" name="nombre"
+                                id="nombre" class="form-control is-invalid" 
+                                autocomplete="off" value="{{ form.nombre.value }}">
+                            <div class="invalid-feedback">
+                                {% for error in form.nombre.errors %}
+                                    <p class="fw-bold">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.nombre }}
+                        {% endif %}
+                    </div>
+                    <label for="apellido" class=form-label>Apellido</label>
+                    <div class="input-group has-validation mb-3">
+                        {% if form.apellido.errors %}
+                            <input type="text" name="apellido"
+                                id="apellido" class="form-control is-invalid"
+                                autocomplete="off" value="{{ form.apellido.value }}">
+                            <div class="invalid-feedback">
+                                {% for error in form.apellido.errors %}
+                                    <p class="fw-bold">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.apellido }}
+                        {% endif %}
+                    </div>
+                    <label for="edad" class="form-label">Edad</label>
+                    <div class="input-group mb-3">
+                        {{ form.edad.errors }}
+                        {{ form.edad }}
+                    </div>
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select name="sexo" id="sexo" class="form-select mb-3">
+                        {% for sexo in form.sexo %}
+                            {{ sexo }}
+                        {% endfor %}
+                    </select>
+                    <label for="fotografia" class="form-label">Fotograf&iacute;a</label>
+                    <div class="input-group mb-3">
+                        {{ form.fotografia.errors }}
+                        {{ form.fotografia }}
+                    </div>
+                    <label class="form-label">Disciplina(s) que imparte</label>
+                    {% if form.disciplinas.errors %}
+                        {% for disciplina in form.disciplinas %}
+                            {% if forloop.counter == disciplinas %}
+                                <div class="form-check">
+                                    <input type="checkbox" name="{{ disciplina.data.attrs.name }}"
+                                        value="{{ forloop.counter }}" id="disciplinas_{{ disciplina.data.index }}"
+                                        class="form-check-input is-invalid">
+                                    <label for="disciplinas_{{ disciplina.data.index }}" class="form-check-label">{{ disciplina.data.label }}</label>
+                                    <div class="invalid-feedback">
+                                        {% for error in form.disciplinas.errors %}
+                                            <p class="fw-bold">{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="form-check">
+                                    <input type="checkbox" name="{{ disciplina.data.attrs.name }}"
+                                        value="{{ forloop.counter }}" id="disciplinas_{{ disciplina.data.index }}"
+                                        class="form-check-input is-invalid">
+                                    <label for="disciplinas_{{ disciplina.data.index }}" class="form-check-label">{{ disciplina.data.label }}</label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for disciplina in form.disciplinas %}
+                            <div class="form-check">
+                                <input type="checkbox" name="{{ disciplina.data.attrs.name }}"
+                                    value="{{ forloop.counter }}" id="disciplinas_{{ disciplina.data.index }}"
+                                    class="form-check-input">
+                                <label for="disciplinas_{{ disciplina.data.index }}" class="form-check-label">{{ disciplina.data.label }}</label>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </fieldset>
+            </div>
+            <div class="col">
+                <fieldset>
+                    <legend>Datos de la cuenta</legend>
+                    <label for="usuario" class="form-label">Nombre de usuario</label>
+                    <div class="input-group has-validation mb-3">
+                        {% if form.nombre_usuario.errors %}
+                            <input type="text" name="nombre_usuario"
+                                id="nombre_usuario" class="form-control is-invalid"
+                                value="{{ form.nombre_usuario.value }}">
+                            <div class="invalid-feedback">
+                                {% for error in form.nombre_usuario.errors %}
+                                    <p class="fw-bold">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.nombre_usuario }}
+                        {% endif %}
+                    </div>
+                    <label for="correo" class="form-label">Correo electr&oacute;nico</label>
+                    <div class="input-group has-validation mb-3">
+                        {% if form.correo.errors %}
+                            <input type="text" name="correo"
+                                id="correo" class="form-control is-invalid"
+                                value="{{ form.correo.value }}">
+                            <div class="invalid-feedback">
+                                {% for error in form.correo.errors %}
+                                    <p class="fw-bold">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.correo }}
+                        {% endif %}
+                    </div>
+                    <label for="contrasena">Contrase&ntilde;a</label>
+                    <div class="input-group has-validation mb-3">
+                        {% if form.contrasena.errors %}
+                            <input type="password" name="contrasena"
+                                id="contrasena" class="form-control is-invalid">
+                            <div class="invalid-feedback">
+                                {% for error in form.contrasena.errors %}
+                                    <p class="fw-bold">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.contrasena }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <input type="submit" value="Agregar entrenador" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock contenido %}

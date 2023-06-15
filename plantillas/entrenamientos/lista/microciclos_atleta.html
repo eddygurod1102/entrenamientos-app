@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<div class="container d-flex flex-column">
-    <a href="{% url 'agregar_microciclo' atleta.pk %}" class="btn btn-success mx-auto mb-3">+ Agregar microciclo</a>
-</div>
+{% if user.is_staff %}
+    <div class="container d-flex flex-column">
+        <a href="{% url 'agregar_microciclo' atleta.pk %}" class="btn btn-success mx-auto mb-3">+ Agregar microciclo</a>
+    </div>
+{% endif %}
 <div class="container d-flex flex-row justify-content-evenly align-items-center flex-wrap mt-3">
     {% for microciclo in microciclos %}
     <div class="card text-center mb-3" style="width: 20rem;">

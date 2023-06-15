@@ -1,4 +1,5 @@
 from django import template
+from django.contrib.auth.models import Group
 from entrenamientos.models import (
     Dias_Ejercicios,
     Atletas_Disciplina,
@@ -31,3 +32,23 @@ def entrenador_disciplinas(entrenador):
     return {
         'entrenador_disciplinas': entrenador_disciplinas,
     }
+
+# Etiqueta personalizada para verificar si una persona es atleta.
+@register.simple_tag
+def es_atleta(usuario):
+    grupo = Group.objects.get(name = 'Atleta')
+
+    if grupo in usuario.groups.all():
+        return True
+    else:
+        return False
+    
+# Etiqueta personalizada para verificar si una persona es entrenador.
+@register.simple_tag
+def es_entrenador(usuario):
+    grupo = Group.objects.get(name = 'Entrenador')
+
+    if grupo in usuario.groups.all():
+        return True
+    else:
+        return False

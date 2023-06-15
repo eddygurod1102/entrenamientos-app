@@ -1,8 +1,13 @@
-from typing import Any, Dict
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    FormView
+)
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .forms import *
@@ -27,37 +32,37 @@ def get_pagina_inicio(request):
     )
 
 # Vista que muestra a todos los atletas registrados en la base de datos.
-class VistaListaAtletas(ListView):
+class ListaAtletas(ListView):
     model = Atleta
-    template_name = 'entrenamientos/lista_atletas.html'
+    template_name = 'entrenamientos/lista/atletas.html'
 
 # Vista que muestra a todos los entrenadores registrados en la base de datos.
-class VistaListaEntrenadores(ListView):
+class ListaEntrenadores(ListView):
     model = Entrenador
-    template_name = 'entrenamientos/lista_entrenadores.html'
+    template_name = 'entrenamientos/lista/entrenadores.html'
 
 # Vista que muestra a todas las disciplinas registradas en la base de datos.
-class VistaListaDisciplinas(ListView):
+class ListaDisciplinas(ListView):
     model = Disciplina
-    template_name = 'entrenamientos/lista_disciplinas.html'
+    template_name = 'entrenamientos/lista/disciplinas.html'
 
 # Vista que muestra a todos los ejercicios registrados en la base de datos.
-class VistaListaEjercicios(ListView):
+class ListaEjercicios(ListView):
     model = Ejercicio
-    template_name = 'entrenamientos/lista_ejercicios.html'
+    template_name = 'entrenamientos/lista/ejercicios.html'
 
 # Vista que muestra la información de un atleta.
 class VistaDetalleAtleta(DetailView):
     model = Atleta
-    template_name = 'entrenamientos/detalle_atleta.html'
-    
+    template_name = 'entrenamientos/detalle/atleta.html'
+
 # Vista que muestra la información de un entrenador.
-class VistaDetalleEntrenador(DetailView):
+class DetalleEntrenador(DetailView):
     model = Entrenador
-    template_name = 'entrenamientos/detalle_entrenador.html'
+    template_name = 'entrenamientos/detalle/entrenador.html'
 
 # Vista que muestra los microciclos
-class VistaListaMicrociclos():
+class ListaMicrociclos():
     def get_vista(request, pk):
         atleta = Atleta.objects.get(pk=pk)
         microciclos = Microciclo.objects.filter(atleta_fk=atleta)
@@ -69,20 +74,20 @@ class VistaListaMicrociclos():
 
         return render(
             request,
-            'entrenamientos/lista_microciclos_atleta.html',
+            'entrenamientos/lista/microciclos_atleta.html',
             context
         )
 
 # Vista que muestra los días de entrenamiento de un microciclo de un atleta.
-class VistaListaDiasEntrenamiento(ListView):
+class ListaDiasEntrenamiento(ListView):
     model = Dia_Entrenamiento
-    template_name = 'entrenamientos/lista_dias_entrenamiento.html'
+    template_name = 'entrenamientos/lista/dias_entrenamiento.html'
 
     def get_context_data(**kwargs):
         context = super().get_context_data(**kwargs)
         return context
 
-class VistaListaDiasEntrenamiento():
+class ListaDiasEntrenamiento():
     def get_vista(request, pk1, pk2):
         # Obtener al atleta mediante su llave primaria.
         atleta = Atleta.objects.get(pk=pk1)
@@ -101,38 +106,38 @@ class VistaListaDiasEntrenamiento():
 
         return render(
             request,
-            'entrenamientos/lista_dias_entrenamiento.html',
+            'entrenamientos/lista/dias_entrenamiento.html',
             context
         )
-    
+
 # Vista que muestra la información de una disciplina.
-class VistaDetalleDisciplina(DetailView):
+class DetalleDisciplina(DetailView):
     model = Disciplina
-    template_name = 'entrenamientos/detalle_disciplina.html'
+    template_name = 'entrenamientos/detalle/disciplina.html'
 
 # Vista que muestra la información de un ejercicio.
-class VistaDetalleEjercicio(DetailView):
+class DetalleEjercicio(DetailView):
     model = Ejercicio
-    template_name = 'entrenamientos/detalle_ejercicio.html'
+    template_name = 'entrenamientos/detalle/ejercicio.html'
 
 # Vista para agregar un ejercicio.
-class VistaFormularioAgregarEjercicio(CreateView):
+class AgregarEjercicio(CreateView):
     model = Ejercicio
-    template_name ='entrenamientos/formulario_agregar_ejercicio.html'
+    template_name ='entrenamientos/formulario/agregar_ejercicio.html'
     fields = ['nombre', 'descripcion']
     success_url = reverse_lazy('lista_ejercicios')
 
 # Vista para agregar una disciplina.
-class VistaFormularioAgregarDisciplina(CreateView):
+class AgregarDisciplina(CreateView):
     model = Disciplina
-    template_name = 'entrenamientos/formulario_agregar_disciplina.html'
+    template_name = 'entrenamientos/formulario/agregar_disciplina.html'
     fields = '__all__'
     success_url = reverse_lazy('lista_disciplinas')
 
 # Vista para agregar un atleta nuevo.
-class VistaFormularioAgregarAtleta(FormView):
+class AgregarAtleta(FormView):
     form_class = FormularioPersona
-    template_name = 'entrenamientos/formulario_agregar_atleta.html'
+    template_name = 'entrenamientos/formulario/agregar_atleta.html'
     success_url = reverse_lazy('inicio')
 
     def form_valid(self, form):
@@ -141,15 +146,17 @@ class VistaFormularioAgregarAtleta(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = FormularioPersona()
-        form.es_entrenador_atleta(bandera = 'Atleta')
-        context['form'] = form
+        # form = FormularioPersona()
+        # form.es_entrenador_atleta(bandera = 'Atleta')
+        # form.set_disciplinas(disciplinas = Disciplina.get_queryset_tupla_disciplinas())
+        context['form'].set_disciplinas(disciplinas = Disciplina.get_queryset_tupla_disciplinas())
+        context['disciplinas'] = Disciplina.objects.count()
         return context
 
 # Vista para agregar un entrenador nuevo.
-class VistaFormularioAgregarEntrenador(FormView):
+class AgregarEntrenador(FormView):
     form_class = FormularioPersona
-    template_name = 'entrenamientos/formulario_agregar_entrenador.html'
+    template_name = 'entrenamientos/formulario/agregar_entrenador.html'
     success_url = reverse_lazy('lista_entrenadores')
 
     def form_valid(self, form):
@@ -160,11 +167,12 @@ class VistaFormularioAgregarEntrenador(FormView):
         context = super().get_context_data(**kwargs)
         form = FormularioPersona()
         form.es_entrenador_atleta(bandera = 'Entrenador')
+        form.set_disciplinas(disciplinas = Disciplina.get_queryset_tupla_disciplinas())
         context['form'] = form
         return context
 
 # Vista para agregar a un entrenador como atleta.
-class VistaFormularioAgregarAtletaExistente():
+class AgregarAtletaExistente():
     def get_form(request):
         # Creación del formulario.
         form = FormularioPersonaExistente()
@@ -200,7 +208,7 @@ class VistaFormularioAgregarAtletaExistente():
 
         return render(
             request,
-            'entrenamientos/formulario_agregar_atleta_existente.html',
+            'entrenamientos/formulario/agregar_atleta_existente.html',
             context
         )
 
@@ -235,7 +243,7 @@ class VistaFormularioAgregarAtletaExistente():
         return HttpResponseRedirect(reverse_lazy('lista_atletas'))
 
 # Vista para agregar un atleta como entrenador.
-class VistaFormularioAgregarEntrenadorExistente():
+class AgregarEntrenadorExistente():
     def get_form(request):
         # Creación del formulario.
         form = FormularioPersonaExistente()
@@ -271,10 +279,10 @@ class VistaFormularioAgregarEntrenadorExistente():
 
         return render(
             request,
-            'entrenamientos/formulario_agregar_entrenador_existente.html',
+            'entrenamientos/formulario/agregar_entrenador_existente.html',
             context
-        )        
-    
+        )
+
     def agregar_entrenador(request):
         # Obtener los datos del formulario.
         persona_id = request.POST['personas']
@@ -306,7 +314,7 @@ class VistaFormularioAgregarEntrenadorExistente():
         return HttpResponseRedirect(reverse_lazy('lista_entrenadores'))
 
 # Vista para agregar un microciclo
-class VistaFormularioAgregarMicrociclo():
+class AgregarMicrociclo():
     def get_form(request, pk):
         # Obtener al atleta por su llave primaria.
         atleta = Atleta.objects.get(pk=pk)
@@ -324,7 +332,7 @@ class VistaFormularioAgregarMicrociclo():
 
         return render(
             request,
-            'entrenamientos/formulario_agregar_microciclo.html',
+            'entrenamientos/formulario/agregar_microciclo.html',
             context
         )
 
@@ -343,7 +351,7 @@ class VistaFormularioAgregarMicrociclo():
         microciclo.atleta_fk = atleta
 
         # Guardar microciclo en la base de datos.
-        microciclo.save() 
+        microciclo.save()
 
         contador = 1 # Variable para recorres la lista de checkboxes de los entrenadores.
 
@@ -363,12 +371,12 @@ class VistaFormularioAgregarMicrociclo():
         return HttpResponseRedirect(reverse_lazy('microciclos_atleta', kwargs={'pk': pk}))
 
 # Vista para añadir un día de entrenamiento a un microciclo en específico.
-class VistaFormularioAgregarDia():
+class AgregarDia():
     def get_form(request, pk1, pk2):
         # Obtener al atleta y al microciclo mediante sus llaves primarias.
         atleta = Atleta.objects.get(pk=pk1)
         microciclo = Microciclo.objects.get(pk=pk2)
-        
+
         context = {
             'form': FormularioDiaEntrenamiento(),
             'atleta': atleta,
@@ -377,7 +385,7 @@ class VistaFormularioAgregarDia():
 
         return render(
             request,
-            'entrenamientos/formulario_agregar_dia.html',
+            'entrenamientos/formulario/agregar_dia.html',
             context
         )
 
@@ -398,7 +406,7 @@ class VistaFormularioAgregarDia():
         return HttpResponseRedirect(reverse_lazy('dias_entrenamiento', kwargs={'pk1': pk1, 'pk2': pk2}))
 
 # Vista para agregar un ejercicio a un día de entrenamiento
-class VistaFormularioAgregarEjercicioDia():
+class AgregarEjercicioDia():
     def get_form(request, pk1, pk2, pk3):
         # Obtener al atleta, microciclo y el día de entrenamiento mediante sus llaves primarias.
         atleta = Atleta.objects.get(pk=pk1)
@@ -414,7 +422,7 @@ class VistaFormularioAgregarEjercicioDia():
 
         return render(
             request,
-            'entrenamientos/formulario_agregar_ejercicio_dia.html',
+            'entrenamientos/formulario/agregar_ejercicio_dia.html',
             context
         )
 
@@ -431,7 +439,7 @@ class VistaFormularioAgregarEjercicioDia():
 
         # Obtener el ejercicio mediante la llave primaria que nos da el select.
         ejercicio = Ejercicio.objects.get(pk=ejercicio_pk)
-        
+
         # Creación de un objeto Dias_Ejercicios.
         dias_ejercicios = Dias_Ejercicios()
         dias_ejercicios.dias_entrenamiento_fk = dia_entrenamiento
@@ -445,22 +453,22 @@ class VistaFormularioAgregarEjercicioDia():
         # Guardar en la base de datos.
         dias_ejercicios.save()
         return HttpResponseRedirect(reverse_lazy('dias_entrenamiento', kwargs={'pk1': pk1, 'pk2': pk2,}))
-    
+
 # Vista para editar información de un ejercicio.
-class VistaFormularioEditarEjercicio(UpdateView):
+class EditarEjercicio(UpdateView):
     model = Ejercicio
-    template_name = 'entrenamientos/formulario_editar_ejercicio.html'
+    template_name = 'entrenamientos/formulario/editar_ejercicio.html'
     fields = '__all__'
 
 # Vista para editar información de una disciplina.
-class VistaFormularioEditarDisciplina(UpdateView):
+class EditarDisciplina(UpdateView):
     model = Disciplina
-    template_name = 'entrenamientos/formulario_editar_disciplina.html'
+    template_name = 'entrenamientos/formulario/editar_disciplina.html'
     fields = '__all__'
     success_url = reverse_lazy('lista_disciplinas')
 
 # Vista para editar la información de un atleta.
-class VistaFormularioEditarAtleta():
+class EditarAtleta():
     def get_form(request, pk):
         # Obtener al atleta mediante su llave primaria.
         atleta = Atleta.objects.get(pk=pk)
@@ -475,7 +483,7 @@ class VistaFormularioEditarAtleta():
 
         # Agregar como checkboxes al formulario todas las disciplinas que están registradas.
         form.set_disciplinas(disciplinas=Disciplina.get_queryset_tupla_disciplinas())
-        
+
         context = {
             'form': form.es_entrenador_atleta('Atleta'),
             'atleta': atleta,
@@ -483,7 +491,7 @@ class VistaFormularioEditarAtleta():
 
         return render(
             request,
-            'entrenamientos/formulario_editar_atleta.html',
+            'entrenamientos/formulario/editar_atleta.html',
             context
         )
 
@@ -541,9 +549,9 @@ class VistaFormularioEditarAtleta():
                     Atletas_Disciplina.objects.get(atleta_fk=atleta, disciplina_fk=disciplina).delete()
                 contador += 1
         return HttpResponseRedirect(reverse_lazy('lista_atletas'))
-    
+
 # Vista para editar la información de un entrenador.
-class VistaFormularioEditarEntrenador():
+class EditarEntrenador():
     def get_form(request, pk):
         # Obtener al entrenador mediante su llave primaria.
         entrenador = Entrenador.objects.get(pk=pk)
@@ -566,7 +574,7 @@ class VistaFormularioEditarEntrenador():
 
         return render(
             request,
-            'entrenamientos/formulario_editar_entrenador.html',
+            'entrenamientos/formulario/editar_entrenador.html',
             context
         )
 
@@ -626,72 +634,72 @@ class VistaFormularioEditarEntrenador():
         return HttpResponseRedirect(reverse_lazy('lista_entrenadores'))
 
 # Vista que modifica la información de un día de entrenamiento
-class VistaFormularioEditarDia(UpdateView):
+class EditarDia(UpdateView):
     model = Dia_Entrenamiento
-    template_name = 'entrenamientos/formulario_editar_dia.html'
+    template_name = 'entrenamientos/formulario/editar_dia.html'
     fields = ['titulo']
 
 # Vista para editar la información de un microciclo
-class VistaFormularioEditarMicrociclo(UpdateView):
+class EditarMicrociclo(UpdateView):
     model = Microciclo
-    template_name = 'entrenamientos/formulario_editar_microciclo.html'
+    template_name = 'entrenamientos/formulario/editar_microciclo.html'
     fields = ['titulo']
 
 # Vista para editar la información de un ejercicio en un día de entrenamiento.
-class VistaFormularioEditarEjercicioDia(UpdateView):
+class EditarEjercicioDia(UpdateView):
     model = Dias_Ejercicios
-    template_name = 'entrenamientos/formulario_editar_ejercicio_dia.html'
+    template_name = 'entrenamientos/formulario/editar_ejercicio_dia.html'
     fields = ['ejercicios_fk', 'series', 'repeticiones', 'escala', 'intensidad', 'peso_kg']
 
 # Vista para eliminar un atleta sin borrar el registro de la persona de
 # la base de datos.
-class VistaFormularioEliminarAtleta(DeleteView):
+class EliminarAtleta(DeleteView):
     model = Atleta
-    template_name = 'entrenamientos/formulario_eliminar_atleta.html'
+    template_name = 'entrenamientos/formulario/eliminar_atleta.html'
     success_url = reverse_lazy('lista_atletas')
 
 # Vista para eliminar un entrenador sin borrar el regitro de la persona de
 # la base de datos.
-class VistaFormularioEliminarEntrenador(DeleteView):
+class EliminarEntrenador(DeleteView):
     model = Entrenador
-    template_name = 'entrenamientos/formulario_eliminar_entrenador.html'
+    template_name = 'entrenamientos/formulario/eliminar_entrenador.html'
     success_url = reverse_lazy('lista_entrenadores')
 
 # Vista para eliminar por completo el registro de un entrenador y/o atleta
 # de la base de datos.
-class VistaFormularioEliminarPersona(DeleteView):
+class EliminarPersona(DeleteView):
     model = Persona
-    template_name = 'entrenamientos/formulario_eliminar_persona.html'
+    template_name = 'entrenamientos/formulario/eliminar_persona.html'
     success_url = reverse_lazy('inicio')
 
 # Vista para eliminar un ejercicio.
-class VistaFormularioEliminarEjercicio(DeleteView):
+class EliminarEjercicio(DeleteView):
     model = Ejercicio
-    template_name = 'entrenamientos/formulario_eliminar_ejercicio.html'
+    template_name = 'entrenamientos/formulario/eliminar_ejercicio.html'
     success_url = reverse_lazy('lista_ejercicios')
 
 # Vista para eliminar una disciplina.
-class VistaFormularioEliminarDisciplina(DeleteView):
+class EliminarDisciplina(DeleteView):
     model = Disciplina
-    template_name = 'entrenamientos/formulario_eliminar_disciplina.html'
+    template_name = 'entrenamientos/formulario/eliminar_disciplina.html'
     success_url = reverse_lazy('lista_disciplinas')
 
 # Vista para eliminar un microciclo.
-class VistaFormularioEliminarMicrociclo(DeleteView):
+class EliminarMicrociclo(DeleteView):
     model = Microciclo
-    template_name = 'entrenamientos/formulario_eliminar_microciclo.html'
+    template_name = 'entrenamientos/formulario/eliminar_microciclo.html'
     success_url = reverse_lazy('lista_atletas')
 
 # Vista para eliminar un día de entrenamiento.
-class VistaFormularioEliminarDia(DeleteView):
+class EliminarDia(DeleteView):
     model = Dia_Entrenamiento
-    template_name = 'entrenamientos/formulario_eliminar_dia.html'
+    template_name = 'entrenamientos/formulario/eliminar_dia.html'
     success_url = reverse_lazy('lista_atletas')
 
 # Vista para eliminar un ejercicio de un día de entrenamiento.
-class VistaFormularioEliminarEjercicioDia(DeleteView):
+class EliminarEjercicioDia(DeleteView):
     model = Dias_Ejercicios
-    template_name = 'entrenamientos/formulario_eliminar_ejercicio_dia.html'
+    template_name = 'entrenamientos/formulario/eliminar_ejercicio_dia.html'
     success_url = reverse_lazy('lista_atletas')
 
 # Vistas para hacer peticiones desde el FrontEnd. Las respuestas serán
@@ -706,7 +714,7 @@ def atletas_disciplinas(request, pk):
     for d in disciplinas:
         diccionario[f'{contador}'] = d.disciplina_fk.nombre
         contador += 1
-    
+
     return HttpResponse(json.dumps(diccionario))
 
 # Obtener las disciplinas que imparte un entrenador.

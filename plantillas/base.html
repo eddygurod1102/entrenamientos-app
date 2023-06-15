@@ -1,4 +1,7 @@
 {% load static %}
+{% load entrenamientos_extra %}
+{% es_atleta user as es_atleta %}
+{% es_entrenador user as es_entrenador %}
 
 <!DOCTYPE html>
 <html lang="es-mx">
@@ -21,27 +24,34 @@
                 <a href="{% url 'inicio' %}" class="navbar-brand">EntrenamientosApp</a>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                     <div class="navbar-nav justify-content-start">
-                        <a href="{% url 'lista_atletas' %}" class="nav-link active" aria-current="page">Atletas</a>
-                        <a href="{% url 'lista_entrenadores' %}" class="nav-link active" aria-current="page">Entrenadores</a>
-                        <a href="{% url 'lista_disciplinas' %}" class="nav-link active" aria-current="page">Disciplinas</a>
-                        <a href="{% url 'lista_ejercicios' %}" class="nav-link active" aria-current="page">Ejercicios</a>
+                        {% if user.is_authenticated %}
+                            {% if es_atleta %}
+                                <a href="{% url 'microciclos_atleta' user.persona_cuenta.get_id_atleta %}" class="nav-link active" aria-current="page">Mis microciclos</a>
+                            {% endif %}
+                            {% if user.is_staff %}
+                                <a href="{% url 'lista_atletas' %}" class="nav-link active" aria-current="page">Atletas</a>
+                                <a href="{% url 'lista_entrenadores' %}" class="nav-link active" aria-current="page">Entrenadores</a>
+                                <a href="{% url 'lista_disciplinas' %}" class="nav-link active" aria-current="page">Disciplinas</a>
+                                <a href="{% url 'lista_ejercicios' %}" class="nav-link active" aria-current="page">Ejercicios</a>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     {% if user.is_authenticated %}
-                    <div class="dropdown me-2">
-                        <a href="#" class="dropdown-toggle show text-decoration-none" data-bs-toggle="dropdown" aria-expanded="true">
-                            {{ user.username }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a href="{% url 'cambiar_contrasena' %}" class="dropdown-item">Cambiar contrase&ntilde;a</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a href="{% url 'logout' %}" class="dropdown-item">Cerrar sesi&oacute;n</a></li>
-                        </ul>
-                    </div>
+                        <div class="dropdown me-2">
+                            <a href="#" class="dropdown-toggle show text-decoration-none" data-bs-toggle="dropdown" aria-expanded="true">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a href="{% url 'cambiar_contrasena' %}" class="dropdown-item">Cambiar contrase&ntilde;a</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a href="{% url 'logout' %}" class="dropdown-item">Cerrar sesi&oacute;n</a></li>
+                            </ul>
+                        </div>
                     {% else %}
-                    <div>
-                        <a href="{% url 'login' %}" class="text-decoration-none">Iniciar sesi&oacute;n</a> | 
-                        <a href="{% url 'crear_usuario' %}" class="text-decoration-none">Registrarse</a>
-                    </div>
+                        <div>
+                            <a href="{% url 'login' %}" class="text-decoration-none">Iniciar sesi&oacute;n</a> | 
+                            <a href="{% url 'crear_usuario' %}" class="text-decoration-none">Registrarse</a>
+                        </div>
                     {% endif %}
                 </div>
             </div>

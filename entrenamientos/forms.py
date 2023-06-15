@@ -1,69 +1,137 @@
 from django import forms
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User, Group
 from django.forms import ModelForm
-from .models import Disciplina, Persona, Atleta, Entrenador, Dias_Ejercicios, Atletas_Disciplina, Entrenadores_Disciplina
+from .models import (
+    Disciplina,
+    Persona,
+    Atleta,
+    Entrenador,
+    Dias_Ejercicios,
+    Atletas_Disciplina,
+    Entrenadores_Disciplina
+)
+from .validators import *
+from cuentas.models import Persona_Cuenta
 
 # Formulario para agregar atletas y/o entrenadores no registrados en la base de datos.
 class FormularioPersona(forms.Form):
     nombre = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'id': 'nombre'
+        widget = forms.TextInput(
+            attrs = {
+                'id': 'nombre',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'name': 'nombre',
             }
         ),
-        label='Nombre',
-        required=True,
-
+        validators = [
+            validar_nombre,
+        ],
     )
 
     apellido = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
+        widget = forms.TextInput(
+            attrs = {
                 'id': 'apellido',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'name': 'apellido',
             }
         ),
-        label='Apellido',
-        required=True,
+        validators = [
+            validar_apellido,
+        ]
     )
 
     edad = forms.CharField(
-        widget=forms.NumberInput(
-            attrs={
+        widget = forms.NumberInput(
+            attrs = {
                 'id': 'edad',
+                'class': 'form-control',
+                'name': 'edad',
+                'autocomplete': 'off',
             }
         ),
-        label='Edad',
-        required=True,
+        validators = [
+            validar_edad,
+        ]
     )
 
     sexo = forms.CharField(
-        widget=forms.Select(
-            choices=Persona.SEXOS,
-            attrs={
+        widget = forms.Select(
+            choices = Persona.SEXOS,
+            attrs = {
                 'id': 'sexo',
             }
         ),
-        label='Sexo',
-        required=True,
     )
 
     fotografia = forms.CharField(
-        widget=forms.FileInput(
-            attrs={
+        widget = forms.FileInput(
+            attrs = {
                 'id': 'fotografia',
+                'class': 'form-control',
+                'name': 'fotografia',
             }
         ),
-        label='Fotografía',
-        required=False,
+        required = False,
+        validators = [
+            validar_fotografia,
+        ]
     )
 
     disciplinas = forms.CharField(
-        widget=forms.CheckboxSelectMultiple(
-            attrs={
-                'id': 'disciplinas'
+        widget = forms.CheckboxSelectMultiple(
+            attrs = {
+                'id': 'disciplinas',
+                'name': 'disciplinas',
+                'class': 'form-check-input',
             },
-            choices = Disciplina.get_queryset_tupla_disciplinas()
         ),
-        required = True,
+    )
+
+    nombre_usuario = forms.CharField(
+        widget = forms.TextInput(
+            attrs = {
+                'id': 'usuario',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'name': 'nombre_usuario',
+            }
+        ),
+        validators = [
+            validar_nombre_usuario,
+        ],
+    )
+
+    correo = forms.CharField(
+        widget = forms.TextInput(
+            attrs = {
+                'id': 'correo',
+                'name': 'correo',
+                'class': 'form-control',
+                'autocomplete': 'off',
+            }
+        ),
+        validators = [
+            validar_correo_electronico,
+        ],
+    )
+
+    contrasena = forms.CharField(
+        widget = forms.PasswordInput(
+            attrs = {
+                'id': 'contrasena',
+                'name': 'contrasena',
+                'class': 'form-control',
+                'autocomplete': 'off',
+            }
+        ),
+        help_text = 'La contraseña debe incluir al menos 8 caracteres',
+        validators = [
+            validar_contrasena,
+        ]
     )
 
     def es_entrenador_atleta(self, bandera):
@@ -95,44 +163,74 @@ class FormularioPersona(forms.Form):
         nombre = request.POST['nombre']
         apellido = request.POST['apellido']
         edad = request.POST['edad']
-        sexo = request.POST['apellido']
+        sexo = request.POST['sexo']
         fotografia = request.POST['fotografia']
+        usuario = request.POST['nombre_usuario']
+        correo = request.POST['correo']
+        contrasena = make_password(request.POST['contrasena'])
 
         # Obtiene la lista de checkboxes activados.
         disciplinas = request.POST.getlist('disciplinas')
 
-        # Creación de un nuevo objeto Persona.
-        persona = Persona()
-        persona.nombre = nombre
-        persona.apellido = apellido
-        persona.edad = edad
-        persona.sexo = sexo
-        persona.fotografia = fotografia
+        print(type(fotografia))
 
-        # Guardar el registro de la persona en la base de datos.
-        persona.save()
+        # # Creación de un nuevo objeto Persona.
+        # persona = Persona(
+        #     nombre = nombre,
+        #     apellido = apellido,
+        #     edad = edad,
+        #     sexo = sexo,
+        #     fotografia = fotografia
+        # )
 
-        # Creación de un objeto Atleta, el cuál, obtiene los datos del objeto persona, para luego
-        # después, guardarlo en la base de datos, pero ahora en la tabla Atletas.
-        atleta = Atleta()
-        atleta.persona_fk = persona
-        atleta.save()
+        # # Guardar el registro de la persona en la base de datos.
+        # persona.save()
 
-        contador = 1 # Variable para recorrer la lista de checkboxes de las disciplinas.
+        # # Creación de un objeto Atleta, el cuál, obtiene los datos del objeto persona, para luego
+        # # después, guardarlo en la base de datos, pero ahora en la tabla Atletas.
+        # atleta = Atleta(persona_fk = persona)
+        # # atleta.persona_fk = persona
+        # atleta.save()
 
-        # Por cada checkbox de disciplinas seleccionado, se agrega un registro en la tabla 
-        # Atletas_Disciplinas, con la información del atleta y de la disciplina.
-        for disciplina in Disciplina.get_queryset_disciplinas():
-            if disciplinas.count(f'{contador}') == 1:
-                atleta_disciplina = Atletas_Disciplina(
-                    atleta_fk = atleta,
-                    disciplina_fk = disciplina
-                )
+        # contador = 1 # Variable para recorrer la lista de checkboxes de las disciplinas.
 
-                atleta_disciplina.save()
-                contador += 1
-            else:
-                contador += 1
+        # # Por cada checkbox de disciplinas seleccionado, se agrega un registro en la tabla 
+        # # Atletas_Disciplinas, con la información del atleta y de la disciplina.
+        # for disciplina in Disciplina.get_queryset_disciplinas():
+        #     if disciplinas.count(f'{contador}') == 1:
+        #         atleta_disciplina = Atletas_Disciplina(
+        #             atleta_fk = atleta,
+        #             disciplina_fk = disciplina
+        #         )
+
+        #         atleta_disciplina.save()
+        #         contador += 1
+        #     else:
+        #         contador += 1
+
+        # # Creación de un uevo objeto User.
+        # usuario = User(
+        #     username = usuario,
+        #     email = correo,
+        #     password = make_password(contrasena)
+        # )
+
+
+        # # Guardar el registro del usuario en la base de datos.
+        # usuario.save()
+
+        # # Agregamos al usuario en el grupo de atletas.
+        # usuario.groups.add(Group.objects.get(name = 'Atleta'))
+
+        # # Creación de un nuevo objecto Persona_Cuenta. Recuerda: una persona sólo puede tener
+        # # una cuenta.
+        # persona_cuenta = Persona_Cuenta(
+        #     persona_fk = persona,
+        #     usuario_fk = usuario
+        # )
+
+        # # Guardar el registro en la base de datos.
+        # persona_cuenta.save()
 
     def agregar_entrenador(self, request):
         # Obtener los datos del formulario.
@@ -142,6 +240,9 @@ class FormularioPersona(forms.Form):
         sexo = request.POST['sexo']
         fotografia = request.POST['fotografia']
         disciplinas = request.POST.getlist('disciplinas') # Obtiene lista de checkboxes activados
+        usuario = request.POST['nombre_usuario']
+        correo = request.POST['correo']
+        contrasena = request.POST['contrasena']
 
         # Creación de un nuevo objeto Persona.
         persona = Persona()
@@ -175,6 +276,22 @@ class FormularioPersona(forms.Form):
                 contador += 1
             else:
                 contador += 1
+
+        usuario = User(
+            username = usuario,
+            email = correo,
+            password = make_password(password = contrasena)
+        )
+
+        usuario.save()
+        usuario.groups.add(Group.objects.get(name = 'Entrenador'))
+
+        persona_cuenta = Persona_Cuenta(
+            persona_fk = persona,
+            usuario_fk = usuario
+        )
+
+        persona_cuenta.save()
 
 # Formulario para agregar atletas y entrenadores con personas ya registradas en la base de datos.
 class FormularioPersonaExistente(forms.Form):
@@ -253,17 +370,3 @@ class FormularioEjercicio(ModelForm):
     class Meta():
         model = Dias_Ejercicios
         fields = ['ejercicios_fk', 'series', 'repeticiones', 'escala', 'intensidad', 'peso_kg']
-
-# Formulario de prueba
-class FormularioPrueba(forms.Form):
-    nombre = forms.CharField(
-        max_length = 255,
-        widget = forms.TextInput(
-            attrs = {
-                'name': 'nombre'
-            }
-        )
-    )
-
-    def imprimir_nombre(self, request):
-        print(request.POST['nombre'])
