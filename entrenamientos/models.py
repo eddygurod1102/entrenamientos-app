@@ -19,6 +19,44 @@ class Persona(models.Model):
 
     def __str__(self):
         return f'{self.nombre} {self.apellido}'
+    
+    # Retorna una lista de tuplas de entrenadores que no están registrados como atletas.
+    def get_lista_entrenadores():
+        personas = [] # Lista para almacenar entrenadores que no están registrados como atletas.
+        atletas = []  # Lista para almacenar atletas.
+
+        # Guardar a todos los atletas registrados en la lista atletas.
+        for atleta in Atleta.objects.all():
+            atletas.append(atleta.persona_fk)
+
+        # Verificar si el entrenador no está registrado en la tabla de atletas. Si no lo
+        # está, se agrega a la lista personas (lista que se usará como select para el
+        # formulario).
+        for entrenador in Entrenador.objects.all():
+            if not atletas.count(entrenador.persona_fk):
+                tupla = (entrenador.persona_fk.pk, entrenador.__str__())
+                personas.append(tupla)
+
+        return personas
+
+    # Retorna una lista de tuplas de atletas que no están registrados como entrenadores.
+    def get_lista_atletas():
+        personas = []     # Lista para almacenar atletas que no están registrados como entrenadores.
+        entrenadores = [] # Lista para almacenar entrenadores.
+        
+        # Guardar a todos los entrenadores registrados en la lista entrenadores.
+        for entrenador in Entrenador.objects.all():
+            entrenadores.append(entrenador.persona_fk)
+
+        # Verificar si el atleta no está registrado en la tabla de entrenadores. Si no lo
+        # Está, se agrega a la lista personas (lista que se usará como select para el 
+        # formulario).
+        for atleta in Atleta.objects.all():
+            if not entrenadores.count(atleta.persona_fk):
+                tupla = (atleta.persona_fk.pk, atleta.__str__())
+                personas.append(tupla)
+
+        return personas
 
 class Atleta(models.Model):
     class Meta():
