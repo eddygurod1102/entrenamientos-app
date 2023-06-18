@@ -4,7 +4,7 @@
 
 {% block contenido %}
 <div class="container">
-    <form action="{% url 'atleta_microciclo_agregado' atleta.pk %}" method="post">
+    <form method="post">
         {% csrf_token %}
         {{ form | crispy }}
         <input type="submit" value="Agregar microciclo" class="btn btn-primary">

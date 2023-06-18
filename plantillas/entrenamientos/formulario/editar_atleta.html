@@ -6,9 +6,12 @@
 
 {% block contenido %}
 <div class="container mb-3">
-    <form action="{% url 'atleta_editado' atleta.pk %}" method="post">
+    <form method="post">
         {% csrf_token %}
-        {{ form | crispy }}
+        <fieldset>
+            <legend>Datos generales del atleta</legend>
+            {{ form | crispy }}
+        </fieldset>
         <input type="submit" value="Editar atleta" class="btn btn-primary">
     </form>
 </div>
