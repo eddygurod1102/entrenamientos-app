@@ -7,7 +7,7 @@ urlpatterns = [
 
     # URLs relacionados con atletas
     path('atletas/', ListaAtletas.as_view(), name='lista_atletas'),
-    path('atletas/<int:pk>/', VistaDetalleAtleta.as_view(), name='detalle_atleta'),
+    path('atletas/<int:pk>/', DetalleAtleta.as_view(), name='detalle_atleta'),
     path('atletas/nuevo/', AgregarAtleta.as_view(), name='agregar_atleta_nuevo'),
     path('atletas/existente/', AgregarAtletaExistente.as_view(), name='agregar_atleta_existente'),
     path('atletas/<int:pk>/editar/', EditarAtleta.as_view(), name='editar_atleta'),
@@ -31,6 +31,7 @@ urlpatterns = [
     path('entrenadores/existente/', AgregarEntrenadorExistente.as_view(), name='agregar_entrenador_existente'),
     path('entrenadores/<int:pk>/editar/', EditarEntrenador.as_view(), name='editar_entrenador'),
     path('entrenadores/<int:pk>/eliminar/', EliminarEntrenador.as_view(), name='eliminar_entrenador'),
+    path('entrenadores/<int:pk>/atletas/', MisAtletas.as_view(), name='mis_atletas'),
 
     # URL para eliminar a una persona por completo
     path('personas/<int:pk>/eliminar/', EliminarPersona.as_view(), name='eliminar_persona'),

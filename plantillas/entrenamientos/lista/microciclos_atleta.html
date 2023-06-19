@@ -21,8 +21,10 @@
         </div>
         <div class="card-footer">
             <a href="{% url 'dias_entrenamiento' atleta.pk microciclo.pk %}" class="btn btn-success">Ver</a>
-            <a href="{% url 'editar_microciclo' microciclo.pk %}" class="btn btn-primary">Editar</a>
-            <a href="{% url 'eliminar_microciclo' microciclo.pk %}" class="btn btn-danger">Eliminar</a>
+            {% if user.is_staff %}
+                <a href="{% url 'editar_microciclo' microciclo.pk %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'eliminar_microciclo' microciclo.pk %}" class="btn btn-danger">Eliminar</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

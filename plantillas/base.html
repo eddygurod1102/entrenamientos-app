@@ -28,6 +28,9 @@
                             {% if es_atleta %}
                                 <a href="{% url 'microciclos_atleta' user.persona_cuenta.get_id_atleta %}" class="nav-link active" aria-current="page">Mis microciclos</a>
                             {% endif %}
+                            {% if es_entrenador %}
+                                <a href="{% url 'mis_atletas' user.persona_cuenta.get_id_entrenador %}" class="nav-link active" aria-current="page">Mis atletas</a>
+                            {% endif %}
                             {% if user.is_staff %}
                                 <a href="{% url 'lista_atletas' %}" class="nav-link active" aria-current="page">Atletas</a>
                                 <a href="{% url 'lista_entrenadores' %}" class="nav-link active" aria-current="page">Entrenadores</a>

@@ -345,6 +345,15 @@ class FormularioPersonaExistente(forms.Form):
             else:
                 contador += 1
 
+        # Creación de un objeto Persona_Cuenta para obtener la cuenta del entrenador.
+        cuenta = Persona_Cuenta.objects.get(persona_fk = atleta.persona_fk)
+
+        # Agregamos al entrenador en el grupo de atletas.
+        cuenta.usuario_fk.groups.add(Group.objects.get(name = 'Atleta'))
+
+        # Guardamos los cambios.
+        cuenta.save()
+
     def agregar_entrenador(self, request):
         # Obtener los datos del formulario.
         persona_id = request.POST['personas']
@@ -373,6 +382,15 @@ class FormularioPersonaExistente(forms.Form):
                 contador += 1
             else:
                 contador += 1
+
+        # Creación de un objeto Persona_Cuenta para obtener la cuenta del entrenador.
+        cuenta = Persona_Cuenta.objects.get(persona_fk = entrenador.persona_fk)
+
+        # Agregamos al entrenador en el grupo de atletas.
+        cuenta.usuario_fk.groups.add(Group.objects.get(name = 'Entrenador'))
+
+        # Guardamos los cambios.
+        cuenta.save()
 
 # Formulario para editar la información de una persona.
 class FormularioEditarPersona(forms.Form):

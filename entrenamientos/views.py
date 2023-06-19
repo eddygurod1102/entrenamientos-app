@@ -34,6 +34,7 @@ def get_pagina_inicio(request):
 class ListaAtletas(ListView):
     model = Atleta
     template_name = 'entrenamientos/lista/atletas.html'
+    context_object_name = 'atletas'
 
 # Vista que muestra a todos los entrenadores registrados en la base de datos.
 class ListaEntrenadores(ListView):
@@ -51,7 +52,7 @@ class ListaEjercicios(ListView):
     template_name = 'entrenamientos/lista/ejercicios.html'
 
 # Vista que muestra la información de un atleta.
-class VistaDetalleAtleta(DetailView):
+class DetalleAtleta(DetailView):
     model = Atleta
     template_name = 'entrenamientos/detalle/atleta.html'
 
@@ -84,6 +85,19 @@ class ListaDiasEntrenamiento(ListView):
         context['microciclo'] = Microciclo.objects.get(pk = self.kwargs['pk2'])
         context['dias_entrenamiento'] = Dia_Entrenamiento.objects.filter(microciclo_fk = context['microciclo'])
         return context
+    
+# Vista que muestra los atletas que está llevando un entrenador.
+class MisAtletas(ListView):
+    model = Atleta
+    template_name = 'entrenamientos/lista/atletas.html'
+    context_object_name = 'atletas'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        atletas = Entrenadores_Microciclo.get_atletas(Entrenador.objects.get(pk = self.kwargs['pk']))
+        context['atletas'] = atletas
+        return context
+
 
 # Vista que muestra la información de una disciplina.
 class DetalleDisciplina(DetailView):

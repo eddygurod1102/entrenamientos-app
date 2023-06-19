@@ -11,10 +11,11 @@ register = template.Library()
 # Etiqueta personalizada para cargar los ejercicios de un día de entrenamiento
 # pertenecientes a un microciclo de un atleta.
 @register.inclusion_tag('etiquetas/dias_ejercicios.html')
-def dias_ejercicios(dia):
+def dias_ejercicios(dia, user):
     dias_ejercicios = Dias_Ejercicios.objects.filter(dias_entrenamiento_fk=dia)
     return {
         'dias_ejercicios': dias_ejercicios,
+        'user': user,
     }
 
 # Etiqueta personalizada para cargar las disciplinas que entrena un atleta.

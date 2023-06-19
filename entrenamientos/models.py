@@ -349,3 +349,26 @@ class Entrenadores_Microciclo(models.Model):
 
     def __str__(self):
         return f'{self.entrenador_fk.__str__()} - {self.microciclo_fk.__str__()}'
+
+    # Obtener a todos los atletas que lleva un entrenador
+    def get_atletas(entrenador):
+        # Lista en la que se almacenarán los atletas
+        atletas = []
+
+        # Obtener todos los microciclos del entrenador.
+        microciclos = Entrenadores_Microciclo.objects.filter(entrenador_fk = entrenador)
+        print(microciclos)
+
+        # Por cada objeto Entrenadores_Microciclo se obtienen microciclos por individual,
+        # para después, obtener a los atletas.
+        for microciclo in microciclos:
+            # Obtener el microciclo.
+            m = Microciclo.objects.get(pk = microciclo.microciclo_fk.pk)
+
+            # Como cada atleta lleva varios microciclos, lo anterios nos puede obtener un atleta
+            # varias veces. Para ello, el siguiente if verifica si el atleta no se agregó anteriormente
+            # a la lista atletas. Si no se encuentra, entonces, el atleta es agregado a la lista.
+            if m.atleta_fk not in atletas:
+                atletas.append(m.atleta_fk)
+        
+        return atletas

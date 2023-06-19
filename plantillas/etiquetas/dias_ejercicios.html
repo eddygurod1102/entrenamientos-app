@@ -1,3 +1,6 @@
+{% load entrenamientos_extra %}
+
+{% es_entrenador user as es_entrenador %}
 <tbody>
     {% for dia in dias_ejercicios %}
     <tr class="text-center">
@@ -7,8 +10,10 @@
         <td>{{ dia.escala }}</td>
         <td>{{ dia.peso_kg }}</td>
         <td>{{ dia.get_peso_lb }}</td>
-        <td><a href="{% url 'editar_ejercicio_dia' dia.pk %}" class="btn btn-primary">Editar</a></td>
-        <td><a href="{% url 'eliminar_ejercicio_dia' dia.pk %}" class="btn btn-danger">Eliminar</a></td>
+        {% if user.is_staff or es_entrenador %}
+            <td><a href="{% url 'editar_ejercicio_dia' dia.pk %}" class="btn btn-primary">Editar</a></td>
+            <td><a href="{% url 'eliminar_ejercicio_dia' dia.pk %}" class="btn btn-danger">Eliminar</a></td>
+        {% endif %}
     </tr>
     {% endfor %}
 </tbody>

@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
 {% load entrenamientos_extra %}
+{% es_entrenador user as es_entrenador %}
 
 {% block contenido %}
 <div class="container">
-    <a href="{% url 'agregar_dia' atleta.pk microciclo.pk %}" class="btn btn-success">
-        + Agregar día de entrenamiento
-    </a>
+    {% if user.is_staff or es_entrenador %}
+        <a href="{% url 'agregar_dia' atleta.pk microciclo.pk %}" class="btn btn-success">
+            + Agregar día de entrenamiento
+        </a>
+    {% endif %}
     {% for dia in dias_entrenamiento %}
     <h2 class="mt-3">{{ dia.titulo }}</h2>
     <table class="table table-striped-rows">
@@ -18,25 +21,29 @@
                 <td>Escala</td>
                 <td>Peso (kg)</td>
                 <td>Peso(lb)</td>
-                <td colspan="2">Opciones</td>
+                {% if user.is_staff or es_entrenador %}
+                    <td colspan="2">Opciones</td>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
-            {% dias_ejercicios dia %}
-            <tr class="text-center">
-                <td colspan="3" class="px-auto">
-                    <a href="{% url 'agregar_ejercicio_dia' atleta.pk microciclo.pk dia.pk %}" 
-                       class="btn btn-success">
-                       + Agregar ejercicio
-                    </a>
-                </td>
-                <td colspan="3">
-                    <a href="{% url 'editar_dia' dia.pk %}" class="btn btn-primary">Editar t&iacute;tulo del d&iacute;a</a>
-                </td>
-                <td colspan="2">
-                    <a href="{% url 'eliminar_dia' dia.pk %}" class="btn btn-danger">Eliminar día de entrenamiento</a>
-                </td>
-            </tr>
+            {% dias_ejercicios dia user %}
+            {% if user.is_staff or es_entrenador %}
+                <tr class="text-center">
+                    <td colspan="3" class="px-auto">
+                        <a href="{% url 'agregar_ejercicio_dia' atleta.pk microciclo.pk dia.pk %}" 
+                        class="btn btn-success">
+                        + Agregar ejercicio
+                        </a>
+                    </td>
+                    <td colspan="3">
+                        <a href="{% url 'editar_dia' dia.pk %}" class="btn btn-primary">Editar t&iacute;tulo del d&iacute;a</a>
+                    </td>
+                    <td colspan="2">
+                        <a href="{% url 'eliminar_dia' dia.pk %}" class="btn btn-danger">Eliminar día de entrenamiento</a>
+                    </td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
     {% endfor %}
