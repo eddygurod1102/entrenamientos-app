@@ -8,3 +8,6 @@ class Persona_Cuenta(models.Model):
 
     def get_id_atleta(self):
         return self.persona_fk.atleta_set.first().pk
+    
+    def get_id_entrenador(self):
+        return self.persona_fk.entrenador_set.first().pk
